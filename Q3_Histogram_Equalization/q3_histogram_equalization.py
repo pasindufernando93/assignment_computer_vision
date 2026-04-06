@@ -113,3 +113,35 @@ print("Saved -> q3_output.png")
 plt.show()
 
 
+# FIGURE 2 — Step-by-step algorithm walkthrough
+
+fig2, axes = plt.subplots(1, 3, figsize=(13, 4))
+fig2.suptitle("Q3 — Equalization Algorithm: PDF → CDF → Mapping",
+              fontsize=12, fontweight="bold")
+
+axes[0].bar(range(256), pdf_orig, width=1.0, color="#185FA5", alpha=0.85)
+axes[0].set_title("Step 2: PDF\n(normalized histogram)", fontsize=10)
+axes[0].set_xlabel("Intensity", fontsize=9)
+axes[0].set_ylabel("Probability", fontsize=9)
+axes[0].grid(True, alpha=0.3)
+
+axes[1].plot(range(256), cdf_orig, color="#0F6E56", linewidth=2)
+axes[1].set_title("Step 3: CDF\n(cumulative sum of PDF)", fontsize=10)
+axes[1].set_xlabel("Intensity", fontsize=9)
+axes[1].set_ylabel("Cumulative probability", fontsize=9)
+axes[1].grid(True, alpha=0.3)
+
+axes[2].plot(range(256), lut, color="#A32D2D", linewidth=2)
+axes[2].plot([0, 255], [0, 255], "--", color="#888780", linewidth=1, label="Identity")
+axes[2].set_title("Step 4: Intensity Mapping T(r)\n= CDF × 255", fontsize=10)
+axes[2].set_xlabel("Input intensity  r", fontsize=9)
+axes[2].set_ylabel("Output intensity  T(r)", fontsize=9)
+axes[2].legend(fontsize=9)
+axes[2].grid(True, alpha=0.3)
+
+plt.tight_layout()
+plt.savefig("Q3_Histogram_Equalization/outputs/q3_algorithm_steps.png", dpi=150, bbox_inches="tight")
+print("Saved -> q3_algorithm_steps.png")
+plt.show()
+
+
