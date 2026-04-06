@@ -50,5 +50,66 @@ print(f"  Identical pixels     : {(diff == 0).sum()} / {diff.size}  "
       f"({100*(diff==0).mean():.1f}%)")
 
 
+# FIGURE 1 — Main results
+fig = plt.figure(figsize=(16, 11))
+fig.suptitle("Q3 — Custom Histogram Equalization on Runway Image",
+             fontsize=13, fontweight="bold")
+
+gs = gridspec.GridSpec(3, 3, figure=fig, hspace=0.5, wspace=0.35)
+
+# Row 0: Images
+for col, (im, title) in enumerate([
+    (img,       "Original"),
+    (eq_custom, "Custom equalization\n(our implementation)"),
+    (eq_opencv, "OpenCV cv2.equalizeHist()\n(reference)"),
+]):
+    ax = fig.add_subplot(gs[0, col])
+    ax.imshow(im, cmap="gray", vmin=0, vmax=255)
+    ax.set_title(title, fontsize=9)
+    ax.axis("off")
+
+# Row 1: Histograms 
+hist_eq_custom, _ = np.histogram(eq_custom.ravel(), bins=256, range=(0, 255))
+hist_eq_opencv, _ = np.histogram(eq_opencv.ravel(), bins=256, range=(0, 255))
+
+for col, (h, title, color) in enumerate([
+    (hist_orig,      "Histogram — Original",        "#444444"),
+    (hist_eq_custom, "Histogram — Custom equalized", "#185FA5"),
+    (hist_eq_opencv, "Histogram — OpenCV equalized", "#0F6E56"),
+]):
+    ax = fig.add_subplot(gs[1, col])
+    ax.bar(range(256), h, color=color, alpha=0.85, width=1.0)
+    ax.set_title(title, fontsize=9)
+    ax.set_xlabel("Intensity", fontsize=8)
+    ax.set_ylabel("Count", fontsize=8)
+    ax.tick_params(labelsize=7)
+
+# Row 2: CDF + LUT 
+ax_cdf = fig.add_subplot(gs[2, 0])
+ax_cdf.plot(range(256), cdf_orig * 255, color="#185FA5", linewidth=2)
+ax_cdf.set_title("CDF (scaled to [0,255])\n= the intensity mapping", fontsize=9)
+ax_cdf.set_xlabel("Input intensity", fontsize=8)
+ax_cdf.set_ylabel("Output intensity", fontsize=8)
+ax_cdf.tick_params(labelsize=7)
+ax_cdf.grid(True, alpha=0.3)
+
+ax_lut = fig.add_subplot(gs[2, 1])
+ax_lut.plot(range(256), lut, color="#A32D2D", linewidth=2)
+ax_lut.plot([0, 255], [0, 255], "--", color="#888780", linewidth=1, label="Identity")
+ax_lut.set_title("Lookup table T(r)\n(rounded CDF mapping)", fontsize=9)
+ax_lut.set_xlabel("Input intensity  r", fontsize=8)
+ax_lut.set_ylabel("Output intensity  T(r)", fontsize=8)
+ax_lut.legend(fontsize=8)
+ax_lut.tick_params(labelsize=7)
+ax_lut.grid(True, alpha=0.3)
+
+ax_diff = fig.add_subplot(gs[2, 2])
+ax_diff.imshow(diff, cmap="hot", vmin=0, vmax=5)
+ax_diff.set_title(f"Difference map\n(custom vs OpenCV)\nmax={diff.max()}", fontsize=9)
+ax_diff.axis("off")
+
+plt.savefig("Q3_Histogram_Equalization/outputs/q3_output.png", dpi=150, bbox_inches="tight")
+print("Saved -> q3_output.png")
+plt.show()
 
 
