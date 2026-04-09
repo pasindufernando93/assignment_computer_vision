@@ -4,7 +4,7 @@ import matplotlib.gridspec as gridspec
 import cv2
 
 # ── Load image ─────────────────────────────────────────────────────────────────
-img_bgr = cv2.imread("Q3_Histogram_Equalization/assets/runway.png", cv2.IMREAD_GRAYSCALE)
+img_bgr = cv2.imread("assets/runway.png", cv2.IMREAD_GRAYSCALE)
 img = img_bgr 
 
 print(f"Image shape : {img.shape}")

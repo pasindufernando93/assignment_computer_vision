@@ -4,7 +4,7 @@ import matplotlib.gridspec as gridspec
 import cv2
 
 # Load & convert to grayscale 
-img_bgr  = cv2.imread("Q4_Otsu_Equalization/assets/a1images/emma.jpg")
+img_bgr  = cv2.imread("assets/a1images/emma.jpg")
 img_rgb  = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
 img_gray = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2GRAY)   # uint8 [0, 255]
 
