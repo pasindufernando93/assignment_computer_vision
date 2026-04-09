@@ -29,4 +29,27 @@ print(f"Background pixels       : {background_mask.sum():,}  "
       f"({100*background_mask.mean():.1f}%)")
 
 
+# (b) Histogram Equalization on Foreground only
+def equalize_histogram(image):
+    """Same custom implementation from Q3."""
+    hist   = np.zeros(256, dtype=np.int64)
+    for v in image.ravel():
+        hist[v] += 1
+    pdf        = hist / image.size
+    cdf        = np.cumsum(pdf)
+    cdf_mapped = np.round(cdf * 255).astype(np.uint8)
+    return cdf_mapped[image], hist, cdf_mapped
+
+
+# Extract foreground pixels, equalize them, put back
+fg_pixels        = img_gray[foreground_mask]          # 1-D array of fg pixels
+fg_equalized, fg_hist_orig, fg_lut = equalize_histogram(fg_pixels.reshape(-1, 1))
+fg_equalized     = fg_equalized.ravel()               # back to 1-D
+
+# Build output image: equalized foreground, original background
+result = img_gray.copy()
+result[foreground_mask] = fg_equalized
+
+print(f"\nForeground pixel range (before): [{fg_pixels.min()}, {fg_pixels.max()}]")
+print(f"Foreground pixel range (after) : [{fg_equalized.min()}, {fg_equalized.max()}]")
 
