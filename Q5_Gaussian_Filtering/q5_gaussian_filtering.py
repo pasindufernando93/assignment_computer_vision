@@ -71,5 +71,12 @@ img_gray = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2GRAY).astype(np.float32)
 
 print(f"\nImage : daisy.jpg  {img_gray.shape}")
 
+# (c) Apply our manual kernel using cv2.filter2D
+kernel_f32     = kernel_5x5.astype(np.float32)
+smoothed_manual = cv2.filter2D(img_gray, ddepth=-1, kernel=kernel_f32)
+
+# (d) OpenCV built-in cv2.GaussianBlur
+smoothed_opencv = cv2.GaussianBlur(img_gray, ksize=(5, 5), sigmaX=SIGMA, sigmaY=SIGMA)
+
 
 
