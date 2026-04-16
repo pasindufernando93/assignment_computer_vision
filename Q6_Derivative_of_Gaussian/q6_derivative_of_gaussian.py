@@ -85,3 +85,114 @@ img_gray = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2GRAY).astype(np.float32)
 print(f"\nImage : einstein.png  {img_gray.shape}")
 
 
+# (d) Apply DoG kernels → image gradients
+Gx_dog = cv2.filter2D(img_gray, ddepth=cv2.CV_32F, kernel=dog_x_5.astype(np.float32))
+Gy_dog = cv2.filter2D(img_gray, ddepth=cv2.CV_32F, kernel=dog_y_5.astype(np.float32))
+
+# Gradient magnitude
+mag_dog = np.sqrt(Gx_dog**2 + Gy_dog**2)
+
+# Gradient direction (in degrees)
+angle_dog = np.degrees(np.arctan2(Gy_dog, Gx_dog))
+
+print(f"\nDoG gradient magnitude range : [{mag_dog.min():.2f}, {mag_dog.max():.2f}]")
+
+# (e) cv2.Sobel() comparison
+# Sobel uses a 3×3 kernel that combines Gaussian smoothing + central difference
+# ksize=5 uses a larger Sobel approximation for fair comparison with our 5×5 DoG
+Gx_sobel = cv2.Sobel(img_gray, ddepth=cv2.CV_32F, dx=1, dy=0, ksize=5)
+Gy_sobel = cv2.Sobel(img_gray, ddepth=cv2.CV_32F, dx=0, dy=1, ksize=5)
+mag_sobel = np.sqrt(Gx_sobel**2 + Gy_sobel**2)
+
+print(f"Sobel gradient magnitude range: [{mag_sobel.min():.2f}, {mag_sobel.max():.2f}]")
+
+# Normalise both magnitudes to [0,255] for fair visual comparison
+def norm255(arr):
+    mn, mx = arr.min(), arr.max()
+    return ((arr - mn) / (mx - mn) * 255).astype(np.uint8)
+
+mag_dog_vis   = norm255(mag_dog)
+mag_sobel_vis = norm255(mag_sobel)
+Gx_dog_vis    = norm255(Gx_dog)
+Gy_dog_vis    = norm255(Gy_dog)
+Gx_sobel_vis  = norm255(Gx_sobel)
+Gy_sobel_vis  = norm255(Gy_sobel)
+
+# FIGURE — Gradient results
+fig, axes = plt.subplots(3, 3, figsize=(15, 13))
+fig.suptitle("Q6 — Derivative of Gaussian vs Sobel Gradients  (σ=2, 5×5 kernel)",
+             fontsize=13, fontweight="bold")
+
+panels = [
+    # Row 0
+    (img_gray,      "Original grayscale",         "gray"),
+    (Gx_dog_vis,    "(d) DoG — Gx\n(horizontal edges)", "gray"),
+    (Gy_dog_vis,    "(d) DoG — Gy\n(vertical edges)",   "gray"),
+    # Row 1
+    (mag_dog_vis,   "(d) DoG gradient magnitude\n|∇I| = √(Gx²+Gy²)", "hot"),
+    (Gx_sobel_vis,  "(e) Sobel — Gx",             "gray"),
+    (Gy_sobel_vis,  "(e) Sobel — Gy",             "gray"),
+    # Row 2
+    (mag_sobel_vis, "(e) Sobel gradient magnitude", "hot"),
+    (norm255(np.abs(mag_dog - mag_sobel * (mag_dog.max()/mag_sobel.max()))),
+                    "Scaled difference map\n(DoG vs Sobel magnitude)", "hot"),
+    (norm255(angle_dog + 180),
+                    "Gradient direction (DoG)\n(colour = angle)", "hsv"),
+]
+
+for ax, (im, title, cmap) in zip(axes.ravel(), panels):
+    ax.imshow(im, cmap=cmap, vmin=0, vmax=255)
+    ax.set_title(title, fontsize=9)
+    ax.axis("off")
+
+plt.tight_layout()
+plt.savefig("Q6_Derivative_of_Gaussian/outputs/q6_gradients.png", dpi=150, bbox_inches="tight")
+print("Saved -> q6_gradients.png")
+plt.show()
+
+# FIGURE — Kernel comparison (DoG x vs Sobel x)
+# Sobel 5×5 kernel (OpenCV's actual values)
+sobel_x_5 = cv2.getDerivKernels(dx=1, dy=0, ksize=5)
+# getDerivKernels returns two 1D kernels; outer product = 2D kernel
+sobel_x_2d = np.outer(sobel_x_5[1], sobel_x_5[0]).astype(np.float64)
+sobel_x_2d /= np.abs(sobel_x_2d).sum()   # normalise same way as DoG
+
+fig2, axes2 = plt.subplots(1, 3, figsize=(14, 4))
+fig2.suptitle("Kernel Comparison: DoG (x) vs Sobel (x)  —  5×5", fontsize=12, fontweight="bold")
+
+vmax = max(np.abs(dog_x_5).max(), np.abs(sobel_x_2d).max())
+
+im0 = axes2[0].imshow(dog_x_5, cmap="RdBu_r", vmin=-vmax, vmax=vmax)
+axes2[0].set_title("DoG — x-direction", fontsize=10)
+plt.colorbar(im0, ax=axes2[0])
+for i in range(5):
+    for j in range(5):
+        axes2[0].text(j, i, f"{dog_x_5[i,j]:.4f}", ha="center", va="center",
+                      fontsize=7, color="black")
+
+im1 = axes2[1].imshow(sobel_x_2d, cmap="RdBu_r", vmin=-vmax, vmax=vmax)
+axes2[1].set_title("Sobel — x-direction (normalised)", fontsize=10)
+plt.colorbar(im1, ax=axes2[1])
+for i in range(5):
+    for j in range(5):
+        axes2[1].text(j, i, f"{sobel_x_2d[i,j]:.4f}", ha="center", va="center",
+                      fontsize=7, color="black")
+
+# Overlay centre-row profiles
+axes2[2].plot(range(5), dog_x_5[2, :],    "o-", color="#185FA5", lw=2, ms=7,
+              label="DoG centre row")
+axes2[2].plot(range(5), sobel_x_2d[2, :], "s--", color="#A32D2D", lw=2, ms=7,
+              label="Sobel centre row")
+axes2[2].axhline(0, color="#888780", lw=1, ls=":")
+axes2[2].set_xticks(range(5))
+axes2[2].set_xticklabels(["-2", "-1", "0", "+1", "+2"])
+axes2[2].set_xlabel("x offset", fontsize=10)
+axes2[2].set_ylabel("Coefficient", fontsize=10)
+axes2[2].set_title("Centre row profile", fontsize=10)
+axes2[2].legend(fontsize=9)
+axes2[2].grid(True, alpha=0.3)
+
+plt.tight_layout()
+plt.savefig("Q6_Derivative_of_Gaussian/outputs/q6_kernel_comparison.png", dpi=150, bbox_inches="tight")
+print("Saved -> q6_kernel_comparison.png")
+plt.show()
