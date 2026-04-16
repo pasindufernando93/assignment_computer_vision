@@ -5,7 +5,7 @@ import matplotlib.gridspec as gridspec
 import cv2
 
 # Load image 
-img_bgr = cv2.imread("Q2_Lab_Gamma/assets/a1images/highlights_and_shadows.jpg")
+img_bgr = cv2.imread("assets/a1images/highlights_and_shadows.jpg")
 img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
 
 print(f"Image shape : {img_rgb.shape}")

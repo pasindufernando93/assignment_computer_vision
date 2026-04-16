@@ -6,7 +6,7 @@ import sys
 sys.stdout.reconfigure(encoding='utf-8') 
 
 # Load image 
-img_raw = Image.open("Q1_Inensity_Transforms/assets/runway.png").convert("L")
+img_raw = Image.open("assets/runway.png").convert("L")
 # normalize to [0, 1]
 img = np.array(img_raw, dtype=np.float64) / 255.0  
 

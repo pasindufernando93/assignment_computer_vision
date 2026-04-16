@@ -59,13 +59,13 @@ ax3d.set_title(f"(b) 51×51 Gaussian Kernel  (σ = {SIGMA})", fontsize=12)
 fig_3d.colorbar(surf, ax=ax3d, shrink=0.5, pad=0.1, label="Coefficient value")
 
 plt.tight_layout()
-plt.savefig("q5_3d_surface.png", dpi=150, bbox_inches="tight")
-print("\nSaved → q5_3d_surface.png")
+plt.savefig("Q5_Gaussian_Filtering/outputs/q5_3d_surface.png", dpi=150, bbox_inches="tight")
+print("Saved -> q5_3d_surface.png")
 plt.show()
 
 
 # Load image for filtering  (daisy — good texture + edges for comparison)
-img_bgr  = cv2.imread("Assignment/a1images/a1images/daisy.jpg")
+img_bgr  = cv2.imread("assets/a1images/daisy.jpg")
 img_rgb  = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
 img_gray = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2GRAY).astype(np.float32)
 
@@ -119,8 +119,8 @@ for ax, (im, title) in zip(axes[1], [
     ax.axis("off")
 
 plt.tight_layout()
-plt.savefig("q5_filtering.png", dpi=150, bbox_inches="tight")
-print("Saved → q5_filtering.png")
+plt.savefig("Q5_Gaussian_Filtering/outputs/q5_filtering.png", dpi=150, bbox_inches="tight")
+print("Saved -> q5_filtering.png")
 plt.show()
 
 
@@ -156,8 +156,8 @@ axes2[1].legend(fontsize=9)
 axes2[1].grid(True, alpha=0.3)
 
 plt.tight_layout()
-plt.savefig("q5_kernel_5x5.png", dpi=150, bbox_inches="tight")
-print("Saved → q5_kernel_5x5.png")
+plt.savefig("Q5_Gaussian_Filtering/outputs/q5_kernel_5x5.png", dpi=150, bbox_inches="tight")
+print("Saved -> q5_kernel_5x5.png")
 plt.show()
 
 # Difference heatmap 
@@ -168,7 +168,7 @@ ax.set_title(f"Difference map: manual vs OpenCV\n"
 ax.axis("off")
 plt.colorbar(im3, ax=ax, label="Absolute pixel difference")
 plt.tight_layout()
-plt.savefig("q5_diff.png", dpi=150, bbox_inches="tight")
-print("Saved → q5_diff.png")
+plt.savefig("Q5_Gaussian_Filtering/outputs/q5_diff.png", dpi=150, bbox_inches="tight")
+print("Saved -> q5_diff.png")
 plt.show()
 
