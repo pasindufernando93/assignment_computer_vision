@@ -4,8 +4,8 @@ import matplotlib.gridspec as gridspec
 import cv2
 
 # Load the noisy image (taylor.jpg — has salt & pepper noise)
-BASE     = "assets/a1images/a1q8images"
-img_bgr  = cv2.imread(f"{BASE}/taylor.jpg")
+BASE     = "assets"
+img_bgr  = cv2.imread(f"{BASE}/corrupted.jpg")
 img_rgb  = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
 img_gray = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2GRAY)
 

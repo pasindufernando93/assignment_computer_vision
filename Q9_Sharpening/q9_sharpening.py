@@ -3,9 +3,7 @@ import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import cv2
 
-# ══════════════════════════════════════════════════════════════════════════════
 # Load image
-# ══════════════════════════════════════════════════════════════════════════════
 img_bgr  = cv2.imread("assets/a1images/spider.png")
 img_rgb  = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
 img_gray = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2GRAY).astype(np.float32)

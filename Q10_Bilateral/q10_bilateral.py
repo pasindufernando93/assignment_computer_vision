@@ -4,7 +4,6 @@ import matplotlib.gridspec as gridspec
 import cv2
 import time
 
-# Load image — use shells.tif (good mix of smooth + sharp-edged regions)
 img_bgr  = cv2.imread("assets/a1images/shells.tif")
 img_rgb  = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
 img_gray = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2GRAY).astype(np.float32)
@@ -46,7 +45,6 @@ def bilateral_filter_manual(image, diameter, sigma_s, sigma_r):
 
 
 # Run on a smaller crop first for speed, then full image 
-# Parameters: diameter=9, σ_s=10 (spatial), σ_r=25 (range)
 DIAMETER = 9
 SIGMA_S  = 10    # larger → smoother (more spatial averaging)
 SIGMA_R  = 25    # larger → less edge-preserving (approaches Gaussian blur)
@@ -70,13 +68,13 @@ gauss_full = cv2.GaussianBlur(img_gray, ksize=(9, 9), sigmaX=SIGMA_S)
 gauss_small = cv2.GaussianBlur(small,   ksize=(9, 9), sigmaX=SIGMA_S)
 
 
-# (c) OpenCV bilateral filter (on full image — fast C++ implementation)
+# (c) OpenCV bilateral filter 
 bf_opencv_full  = cv2.bilateralFilter(img_gray, d=DIAMETER,
                                       sigmaColor=SIGMA_R, sigmaSpace=SIGMA_S)
 bf_opencv_small = cv2.bilateralFilter(small, d=DIAMETER,
                                       sigmaColor=SIGMA_R, sigmaSpace=SIGMA_S)
 
-print(f"\nManual vs OpenCV bilateral (on small image):")
+print("Manual vs OpenCV bilateral (on small image):")
 diff = np.abs(bf_manual_small - bf_opencv_small)
 print(f"  Max difference  : {diff.max():.4f}")
 print(f"  Mean difference : {diff.mean():.4f}")
@@ -135,9 +133,9 @@ fig2.suptitle("Q10 — Zoomed Crop: Edge Preservation Comparison",
 
 crop_panels = [
     (small,            "Original"),
-    (gauss_small,      f"Gaussian\n(edges blurred)"),
-    (bf_opencv_small,  f"OpenCV bilateral\n(edges sharp)"),
-    (bf_manual_small,  f"Manual bilateral\n(edges sharp)"),
+    (gauss_small,      "Gaussian\n(edges blurred)"),
+    (bf_opencv_small,  "OpenCV bilateral\n(edges sharp)"),
+    (bf_manual_small,  "Manual bilateral\n(edges sharp)"),
 ]
 for ax, (im, title) in zip(axes2, crop_panels):
     ax.imshow(to_uint8(im)[r1:r2, c1:c2], cmap="gray", vmin=0, vmax=255)

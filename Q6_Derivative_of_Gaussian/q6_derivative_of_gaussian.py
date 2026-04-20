@@ -98,8 +98,6 @@ angle_dog = np.degrees(np.arctan2(Gy_dog, Gx_dog))
 print(f"\nDoG gradient magnitude range : [{mag_dog.min():.2f}, {mag_dog.max():.2f}]")
 
 # (e) cv2.Sobel() comparison
-# Sobel uses a 3×3 kernel that combines Gaussian smoothing + central difference
-# ksize=5 uses a larger Sobel approximation for fair comparison with our 5×5 DoG
 Gx_sobel = cv2.Sobel(img_gray, ddepth=cv2.CV_32F, dx=1, dy=0, ksize=5)
 Gy_sobel = cv2.Sobel(img_gray, ddepth=cv2.CV_32F, dx=0, dy=1, ksize=5)
 mag_sobel = np.sqrt(Gx_sobel**2 + Gy_sobel**2)
@@ -151,7 +149,6 @@ print("Saved -> q6_gradients.png")
 plt.show()
 
 # FIGURE — Kernel comparison (DoG x vs Sobel x)
-# Sobel 5×5 kernel (OpenCV's actual values)
 sobel_x_5 = cv2.getDerivKernels(dx=1, dy=0, ksize=5)
 # getDerivKernels returns two 1D kernels; outer product = 2D kernel
 sobel_x_2d = np.outer(sobel_x_5[1], sobel_x_5[0]).astype(np.float64)
